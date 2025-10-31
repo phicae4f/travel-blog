@@ -1,0 +1,13 @@
+@use "../global/variables" as *;
+
+.header {
+    background-color: black;
+
+    &__icon {
+        color: white;
+    }
+
+    &__name {
+        font-family: $ff-montserrat;
+    }
+}
