@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Icon } from "../ui/Icon";
+import { Link } from "react-router-dom";
+import { DropDown } from "./DropDown";
 
 export const Header = () => {
 
@@ -17,14 +19,16 @@ export const Header = () => {
                   </div>
                   <div className="header__block-right">
                     {isAuth ? (
-                      <span className="header__login">Dropdown</span>
+                      <DropDown />
                     ) : (
-                      <button className="header__login" type="button">Войти</button>
+                      <Link to="/login">
+                        <button className="header__login" type="button">Войти</button>
+                      </Link>
                     )}
                   </div>
                 </div>
                 <div className="header__block-lower">
-                  
+                  <h2 className="header__title">{isAuth ? "Истории ваших путешествий": "Там, где мир начинается с путешествий"}</h2>
                 </div>
             </div>
         </div>

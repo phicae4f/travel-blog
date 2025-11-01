@@ -1,0 +1,100 @@
+@use "../global/variables" as *;
+
+.dropdown {
+  position: relative;
+
+  &__user {
+    background-color: transparent;
+    padding: 0;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  &__user-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+
+  &__user-name {
+    margin-right: 2px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 183.3%;
+    color: $color-white;
+    max-width: 235px;
+    text-align: left;
+  }
+
+  &__user-arrow {
+    width: 14px;
+    height: 11px;
+    transform: rotate(180deg);
+    transition: transform $transition-300;
+
+    &.open {
+      transform: rotate(360deg);
+    }
+  }
+
+  &__menu {
+    position: absolute;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: $color-white;
+    border-radius: 2px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-30px);
+    transition: opacity $transition-300, visibility $transition-300,
+      transform $transition-300;
+
+    &.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+  }
+
+  &__item {
+    user-select: none;
+    padding: 4px 8px 0;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color $transition-300;
+
+    &:first-child {
+      padding-top: 8px;
+    }
+
+    &:last-child {
+      padding-bottom: 8px;
+    }
+
+    &:hover,
+    &:focus-visible {
+      background-color: $color-orange;
+    }
+  }
+
+  &__item a,
+  &__logout {
+    font-family: $ff-poppins;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 183.3%;
+    color: $color-nero;
+  }
+
+  &__logout {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+}
