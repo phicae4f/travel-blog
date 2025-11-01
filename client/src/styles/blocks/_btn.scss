@@ -1,0 +1,40 @@
+@use "../global/variables" as *;
+
+.btn {
+    min-width: 150px;
+    width: auto;
+    height: 51px;
+    padding: 19px 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    background-color: $color-orange;
+    border: 1px solid $color-orange;
+    border-radius: 10px;
+    font-weight: 600;
+    font-family: $ff-poppins;
+    font-size: 16px;
+    line-height: 13px;
+    color: $color-white;
+    transition: background-color $transition-300, border $transition-300;
+
+    &:hover, &:focus-visible {
+        background-color: $color-orange-peel;
+        border: 1px solid $color-orange-peel;
+    }
+    
+    &--transparent {
+        background-color: transparent;
+        color: $color-orange;
+
+        &:hover, &:focus-visible {
+            background-color: transparent;
+            color: $color-orange-peel; 
+            border: 1px solid $color-orange-peel;
+        }
+    }
+
+
+}

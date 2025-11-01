@@ -13,10 +13,12 @@ export const Header = () => {
         <div className="container">
             <div className="header__wrapper">
                 <div className="header__block-upper">
-                  <div className="header__block-left">
-                    <Icon className="header__icon" name="header-icon" width={41} height={30} />
-                    <span className="header__name">Travel</span>
+                  <Link to="/">
+                    <div className="header__block-left">
+                      <Icon className="header__icon" name="header-icon" width={41} height={30} />
+                      <span className="header__name">Travel</span>
                   </div>
+                  </Link>
                   <div className="header__block-right">
                     {isAuth ? (
                       <DropDown />

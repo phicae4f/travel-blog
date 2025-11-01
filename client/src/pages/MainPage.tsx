@@ -1,3 +1,5 @@
 export const MainPage = () => {
-    return <>MainPage</>
+    return (
+        <>MainPage</>
+    )
 }

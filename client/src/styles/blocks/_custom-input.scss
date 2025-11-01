@@ -1,0 +1,68 @@
+@use "../global/variables" as *;
+
+.custom-input {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  position: relative;
+  $root: &;
+
+  &__label {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    color: $color-black-85;
+  }
+
+  &__field {
+    padding: 5px 12px;
+    width: 100%;
+    border: 1px solid $color-gainsboro;
+    border-radius: 2px;
+    color: $color-black;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    font-family: $ff-poppins;
+    transition: border $transition-300;
+
+    &::placeholder {
+      font-family: $ff-poppins;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 22px;
+      color: $color-black-25;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:hover, &:focus-visible {
+        border: 1px solid $color-black-25;
+    }
+  }
+
+  &__error {
+    display: none;
+    position: absolute;
+    color: $color-radical-red;
+    left: 0;
+    bottom: -22px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  &--error {
+    #{$root}__field {
+        border: 1px solid $color-radical-red;
+    }
+
+    #{$root}__error {
+        display: block;
+    }
+  }
+}

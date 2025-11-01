@@ -8,6 +8,9 @@
 
 
 //BLOCKS
-@use "./blocks/auth";
 @use "./blocks/header";
 @use "./blocks/dropdown";
+@use "./blocks/login";
+@use "./blocks/btn";
+@use "./blocks//custom-input";
+@use "./blocks/auth";

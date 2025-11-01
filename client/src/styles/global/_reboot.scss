@@ -15,10 +15,12 @@ body {
     flex-direction: column;
     min-height: 100vh;
     font-family: $ff-poppins;
+    background-color: $color-snow;
 }
 
 main {
     flex-grow: 1;
+    padding: 423px 0 0;
 }
 
 img {
