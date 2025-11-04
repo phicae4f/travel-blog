@@ -23,6 +23,10 @@ main {
     padding: 423px 0 0;
 }
 
+.header--short + main {
+    padding-top: 251px; 
+}
+
 img {
     display: block;
     height: auto;

@@ -6,6 +6,19 @@
     $root: &;
     position: fixed;
     z-index: 100;
+    height: auto;
+
+    &--short {
+        height: 251px;
+
+        #{$root}__wrapper {
+            gap: 39px;
+        }
+
+        #{$root}__block-lower {
+            margin-bottom: 40px;
+        }
+    }
 
     &::before {
         background-image: url(/img/hero.png);

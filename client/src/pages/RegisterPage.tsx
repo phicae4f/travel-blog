@@ -5,7 +5,7 @@ export const RegisterPage = () => {
             <div className="register">
                 <div className="container">
                     <div className="register__wrapper">
-                        <AuthComponent title="Регистрация" fieldErrors={{email: "Аккаунт с данным email уже существует"}}/>
+                        <AuthComponent title="Регистрация" mode="register"/>
                     </div>
                 </div>
             </div>

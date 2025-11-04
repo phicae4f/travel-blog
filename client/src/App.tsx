@@ -4,6 +4,9 @@ import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { MainPage } from "./pages/MainPage";
 import { Layout } from "./components/Layout";
+import { MyProfile } from "./pages/MyProfile";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { ShortLayout } from "./components/ShortLayout";
 
 function App() {
   return (
@@ -31,6 +34,16 @@ function App() {
             <Layout>
               <RegisterPage />
             </Layout>
+          }
+        />
+        <Route
+          path="/my-profile"
+          element={
+            <ProtectedRoute>
+              <ShortLayout>
+                <MyProfile />
+              </ShortLayout>
+            </ProtectedRoute>
           }
         />
       </Routes>

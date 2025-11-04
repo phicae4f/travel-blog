@@ -6,7 +6,7 @@ export const LoginPage = () => {
         <div className="login">
             <div className="container">
                 <div className="login__wrapper">
-                    <AuthComponent title="Вход в профиль" error="Неправильный логин или пароль"/>
+                    <AuthComponent title="Вход в профиль" mode="login"/>
                 </div>
             </div>
         </div>

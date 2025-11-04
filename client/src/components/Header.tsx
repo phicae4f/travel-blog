@@ -1,15 +1,21 @@
-import { useState } from "react";
 import { Icon } from "../ui/Icon";
 import { Link } from "react-router-dom";
 import { DropDown } from "./DropDown";
+import { useAppSelector } from "../hooks/redux";
 
-export const Header = () => {
+interface HeaderProps {
+  isShort?: boolean
+}
 
-  const [isAuth, setIsAuth] = useState(false)
+export const Header = ({isShort = false}: HeaderProps) => {
+
+  const {token} = useAppSelector((state) => state.auth)
+
+  const isAuth = Boolean(token)
 
 
   return (
-    <header className="header">
+    <header className={`header ${isShort ? "header--short": ""}`}>
         <div className="container">
             <div className="header__wrapper">
                 <div className="header__block-upper">
