@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "../ui/Icon";
 import { Link, useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { logout } from "../store/slices/authSlice";
 
 export const DropDown = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const {full_name} = useAppSelector((state) => state.user)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
@@ -46,7 +47,7 @@ export const DropDown = () => {
           width={30}
           height={30}
         />
-        <span className="dropdown__user-name">Новый Пользователь</span>
+        <span className="dropdown__user-name">{full_name || "Новый Пользователь"}</span>
         <Icon
           className={`dropdown__user-arrow ${isOpen ? "open" : ""}`}
           width={14}

@@ -10,6 +10,7 @@ interface HeaderProps {
 export const Header = ({isShort = false}: HeaderProps) => {
 
   const {token} = useAppSelector((state) => state.auth)
+  
 
   const isAuth = Boolean(token)
 

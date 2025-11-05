@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit"
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit"
+import type { RootState } from "../store"
 
 interface UserState {
     id: number | null,
@@ -22,6 +23,87 @@ const initialState: UserState = {
     error: null
 }
 
+export const fetchUserProfile = createAsyncThunk(
+  "user/fetchUserProfile",
+  async (_, {getState, rejectWithValue}) => {
+    try {
+      const state = getState() as RootState
+      const token = state.auth.token
+
+    if(!token) {
+      throw new Error("Отсутствует токен")
+    }
+
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/user`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    })
+
+    const data = await response.json()
+    if(!response.ok) {
+      if(data.messages) {
+
+        const errorMessage = Object.values(data.messages).flat().join(", ")
+        throw new Error(errorMessage)
+      }
+      throw new Error(data.message || "Не удалось загрузить данные профиля")
+
+    }
+    return data
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Не удалось загрузить данные профиля")
+    }
+  }
+)
+export const updateUserProfile = createAsyncThunk(
+  "user/updateUserProfile",
+  async(updateData: {full_name, city, bio, photoFile}: {full_name?: string, city?: string, bio?: string, photoFile?: string}, {getState, rejectWithValue}) => {
+    try {
+      const state = getState() as RootState
+      const token = state.auth.token
+
+      if(!token) {
+        throw new Error("Отсутствует токен")
+      }
+
+      const formData = new FormData()
+
+      if(full_name !== undefined) formData.append("full_name", full_name)
+      if(city !== undefined) formData.append("city", city)
+      if(bio !== undefined) formData.append("bio", bio)
+      if(photoFile !== undefined) formData.append("photoFile", photoFile)
+
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: formData
+      })
+
+      const data = await response.json()
+      if(!response.ok) {
+        if(data.messages) {
+
+          const errorMessage = Object.values(data.messages).flat().join(", ")
+          throw new Error(errorMessage)
+        }
+        throw new Error(data.message || "Не удалось обновить профиль")
+
+      }
+    return data.data || data 
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Не удалось обновить профиль")
+    }
+  }
+)
+
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -38,6 +120,52 @@ const userSlice = createSlice({
       state.photo = "";
     }
   },
+  extraReducers: (builder) => {
+    //FETCH PROFILE
+    builder
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.isLoading = false
+
+        const userData = action.payload.data || action.payload;
+        state.id = userData.id || null;
+        state.full_name = userData.full_name || "";
+        state.city = userData.city || "";
+        state.country = userData.country || "";
+        state.bio = userData.bio || "";
+        state.photo = userData.photo || "";
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.error = action.payload as string || "Ошибка загрузки профиля"
+        state.isLoading = false
+      })
+
+      //UPDATE PROFILE
+      .addCase(updateUserProfile.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.isLoading = false
+        
+        const updatedData = action.payload.data || action.payload
+        if (updatedData.full_name !== undefined) state.full_name = updatedData.full_name;
+        if (updatedData.city !== undefined) state.city = updatedData.city;
+        if (updatedData.country !== undefined) state.country = updatedData.country;
+        if (updatedData.bio !== undefined) state.bio = updatedData.bio;
+        if (updatedData.photo !== undefined) state.photo = updatedData.photo;
+
+        // Или если сервер возвращает полный объект пользователя
+        if (updatedData.id) state.id = updatedData.id;
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.error = action.payload as string || "Ошибка обновления профиля"
+        state.isLoading = false
+      })
+  }
 })
 
 export const {clearUserError,clearUserProfile} = userSlice.actions

@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Icon } from "../ui/Icon";
 import { CustomInput } from "../ui/CustomInput";
 import { CustomTextarea } from "../ui/CustomTextarea";
 import { Button } from "../ui/Button";
+import { useAppDispatch, useAppSelector } from "../hooks/redux";
+import { fetchUserProfile, updateUserProfile } from "../store/slices/userSlice";
+import { useForm } from "react-hook-form";
 
 interface ProfileFormData {
-  username: string;
+  full_name: string;
   city: string;
   bio: string;
   newPassword: string;
@@ -14,42 +17,98 @@ interface ProfileFormData {
 
 export const MyProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState<ProfileFormData>({
-    username: "Новый Пользователь",
-    city: "Вышний Волочёк",
-    bio: "Я обожаю путешествовать. Мне нравится открывать для себя новые места, знакомиться с разными культурами и традициями. Я всегда готова отправиться в путь, даже если это означает покинуть зону комфорта. В дороге я встречаю новых людей, учусь новому и наслаждаюсь красотами природы. Путешествия дают мне возможность расширить свой кругозор и узнать больше о мире вокруг меня. Я уверена, что каждый новый опыт делает меня сильнее и мудрее.",
-    newPassword: "",
-    confirmPassword: "",
-  });
+
+  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string>("")
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const {full_name, city, bio, photo, error, isLoading } = useAppSelector(
+    (state) => state.user
+  );
+  const dispatch = useAppDispatch();
+  const {register, handleSubmit, formState: {errors}, reset, watch} = useForm<ProfileFormData>({
+    defaultValues: {
+      full_name: full_name || "",
+      city: city || "",
+      bio: bio || "",
+      newPassword: "",
+      confirmPassword: ""
+    }
+  })
+  useEffect(() => {
+    reset({
+      full_name: full_name || "",
+      city: city || "",
+      bio: bio || "",
+      newPassword: "",
+      confirmPassword: ""
+    })
+  }, [full_name, city, bio, reset])
+
+  useEffect(() => {
+    dispatch(fetchUserProfile());
+  }, [dispatch]);
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+
+    if(file) {
+      if(!file.type.startsWith("image/")) {
+        alert("Выберите изображение")
+        return;
+      }
+      if(file.size > 5 * 1024 * 1024) {
+        alert("Размер файла слишком большой")
+        return;
+      }
+      setSelectedPhoto(file)
+      const objectUrl = URL.createObjectURL(file)
+      setPhotoPreview(objectUrl)
+    }
+  }
 
   const handleEdit = () => {
     setIsEditing(true);
   };
+
   const handleCloseEdit = () => {
     setIsEditing(false);
-    setFormData({
-      username: "Новый Пользователь",
-      city: "Вышний Волочёк",
-      bio: "Я обожаю путешествовать. Мне нравится открывать для себя новые места, знакомиться с разными культурами и традициями. Я всегда готова отправиться в путь, даже если это означает покинуть зону комфорта. В дороге я встречаю новых людей, учусь новому и наслаждаюсь красотами природы. Путешествия дают мне возможность расширить свой кругозор и узнать больше о мире вокруг меня. Я уверена, что каждый новый опыт делает меня сильнее и мудрее.",
+    reset({
+      full_name: full_name || "",
+      city: city || "",
+      bio: bio || "",
       newPassword: "",
-      confirmPassword: "",
-    });
+      confirmPassword: ""
+    })
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log(formData)
-    setIsEditing(false);
+  const onSubmit = async (data: ProfileFormData) => {
+    const updatedData: any = {}
+    if(data.full_name !== undefined) updatedData.full_name = data.full_name;
+    if (data.city !== undefined) updatedData.city = data.city;
+    if (data.bio !== undefined) updatedData.bio = data.bio;
+
+    if(selectedPhoto) {
+      updatedData.photoFile = selectedPhoto
+    }
+
+    if (data.newPassword && data.newPassword === data.confirmPassword) {
+      updatedData.password = data.newPassword;
+    }
+    const result = await dispatch(updateUserProfile(updatedData));
+    
+    if (updateUserProfile.fulfilled.match(result)) {
+      setIsEditing(false);
+      setSelectedPhoto(null)
+      setPhotoPreview("")
+    }
   }
 
-  const handleInputChange =
-    (field: keyof ProfileFormData) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: e.target.value,
-      }));
-    };
+  const currentPhoto = photoPreview || photo || "/img/new-user.jpg"
 
   return (
     <div className="profile">
@@ -59,25 +118,26 @@ export const MyProfile = () => {
             <div className="profile__img-wrapper">
               <img
                 className="profile__img"
-                src="/img/new-user.jpg"
+                src={photo || "/img/new-user.jpg"}
                 alt="Фото профиля"
                 width={240}
                 height={240}
               />
-              <div className="profile__edit-img">
+              <div className="profile__edit-img" onClick={handleImageClick}>
                 <Icon name="photo-icon" width={32} height={32} />
                 <span className="profile__edit-text">Изменить фото</span>
               </div>
+              <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="visually-hidden"/>
             </div>
             <div className="profile__info">
-              <h2 className="profile__name">{formData.username}</h2>
+              <h2 className="profile__name">{full_name || "Новый пользователь"}</h2>
               <div className="profile__info-block">
                 <span className="profile__info-heading">Город:</span>
-                <p className="profile__info-text">{formData.city}</p>
+                <p className="profile__info-text">{city || "Не указан"}</p>
               </div>
               <div className="profile__info-block">
                 <span className="profile__info-heading">О себе:</span>
-                <p className="profile__info-text">{formData.bio}</p>
+                <p className="profile__info-text">{bio || "Информация о себе не заполнена"}</p>
               </div>
             </div>
             <button
@@ -93,43 +153,56 @@ export const MyProfile = () => {
             <div className="profile__img-wrapper">
               <img
                 className="profile__img"
-                src="/img/new-user.jpg"
+                src={currentPhoto}
                 alt="Фото профиля"
                 width={240}
                 height={240}
               />
-              <div className="profile__edit-img">
+              <div className="profile__edit-img" onClick={handleImageClick}>
                 <Icon name="photo-icon" width={32} height={32} />
                 <span className="profile__edit-text">Изменить фото</span>
               </div>
+              <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="visually-hidden"/>
             </div>
-            <form className="profile__info" onSubmit={handleSubmit}>
+            <form className="profile__info" onSubmit={handleSubmit(onSubmit)}>
+              {error && <div className="auth__error">{error}</div>}
               <div className="profile__info-block">
                 <CustomInput
-                  onChange={handleInputChange("username")}
                   labelText="ФИО"
                   placeholder="ФИО"
                   id="username"
-                  value={formData.username}
                   type="text"
+                  error={errors.full_name?.message}
+                  {...register("full_name", {
+                    required: "ФИО обязательно",
+                    minLength: {
+                      value: 2,
+                      message: "Минимум 2 символа"
+                    }
+                  })}
                 />
               </div>
               <div className="profile__info-block">
                 <CustomInput
-                  onChange={handleInputChange("city")}
                   labelText="Город"
                   placeholder="Город"
                   id="city"
-                  value={formData.city}
                   type="text"
+                  error={errors.city?.message}
+                  {...register("city")}
                 />
               </div>
               <div className="profile__info-block">
                 <span className="profile__info-heading">О себе:</span>
                 <CustomTextarea
-                  onChange={handleInputChange("bio")}
                   placeholder="О себе..."
-                  value={formData.bio}
+                  error={errors.bio?.message}
+                  {...register("bio", {
+                    maxLength: {
+                      value: 600,
+                      message: "Максимум 600 символов"
+                    }
+                  })}
                 />
               </div>
               <div className="profile__change-password">
@@ -137,22 +210,32 @@ export const MyProfile = () => {
                 <div className="profile__change-password-fields">
                   <div className="profile__change-password-field">
                     <CustomInput
-                      onChange={handleInputChange("newPassword")}
                       labelText="Новый пароль"
                       placeholder="Новый пароль"
                       id="new-password"
-                      value={formData.newPassword}
                       type="password"
+                      error={errors.newPassword?.message}
+                      {...register("newPassword", {
+                        minLength: {
+                          value: 6,
+                          message: "Минимум 6 символов"
+                        }
+                      })}
                     />
                   </div>
                   <div className="profile__change-password-field">
                     <CustomInput
-                      onChange={handleInputChange("confirmPassword")}
                       labelText="Повторите пароль"
                       placeholder="Повторите пароль"
                       id="confirm-new-password"
-                      value={formData.confirmPassword}
                       type="password"
+                      error={errors.confirmPassword?.message}
+                      {...register("confirmPassword", {
+                        validate: (value) => {
+                          const newPassword = watch("newPassword");
+                          return value === newPassword || "Пароли не совпадают";
+                        }
+                      })}
                     />
                   </div>
                 </div>
@@ -162,9 +245,10 @@ export const MyProfile = () => {
                     type="button"
                     text="Назад"
                     onClick={handleCloseEdit}
+                    disabled={isLoading}
                   />{" "}
-                  {/* //disabled */}
-                  <Button type="submit" text="Сохранить" /> {/* //disabled */}
+                  <Button type="submit" text={isLoading ? "Сохранение..." : "Сохранить"} 
+                    disabled={isLoading}/> 
                 </div>
               </div>
             </form>
