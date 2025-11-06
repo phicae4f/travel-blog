@@ -99,6 +99,9 @@ export const MyProfile = () => {
     if (data.newPassword && data.newPassword === data.confirmPassword) {
       updatedData.password = data.newPassword;
     }
+     console.log("Photo path from server:", photo);
+      console.log("Trying to load from:", `${import.meta.env.VITE_API_URL}${photo}`);
+
     const result = await dispatch(updateUserProfile(updatedData));
     
     if (updateUserProfile.fulfilled.match(result)) {
@@ -109,6 +112,8 @@ export const MyProfile = () => {
   }
 
   const currentPhoto = photoPreview || photo || "/img/new-user.jpg"
+
+  
 
   return (
     <div className="profile">

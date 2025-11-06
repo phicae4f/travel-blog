@@ -60,7 +60,7 @@ export const fetchUserProfile = createAsyncThunk(
 )
 export const updateUserProfile = createAsyncThunk(
   "user/updateUserProfile",
-  async(updateData: {full_name, city, bio, photoFile}: {full_name?: string, city?: string, bio?: string, photoFile?: string}, {getState, rejectWithValue}) => {
+  async(updateData: {full_name?: string, city?: string, bio?: string, photo?: File, password?: string}, {getState, rejectWithValue}) => {
     try {
       const state = getState() as RootState
       const token = state.auth.token
@@ -71,16 +71,16 @@ export const updateUserProfile = createAsyncThunk(
 
       const formData = new FormData()
 
-      if(full_name !== undefined) formData.append("full_name", full_name)
-      if(city !== undefined) formData.append("city", city)
-      if(bio !== undefined) formData.append("bio", bio)
-      if(photoFile !== undefined) formData.append("photoFile", photoFile)
+      if(updateData.full_name !== undefined) formData.append("full_name", updateData.full_name)
+      if(updateData.city !== undefined) formData.append("city", updateData.city)
+      if(updateData.bio !== undefined) formData.append("bio", updateData.bio)
+      if(updateData.photo !== undefined) formData.append("photo", updateData.photo)
+      if(updateData.password !== undefined) formData.append("password", updateData.password)
 
 
       const response = await fetch(`${import.meta.env.VITE_API_URL}/user`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
         body: formData
@@ -136,7 +136,16 @@ const userSlice = createSlice({
         state.city = userData.city || "";
         state.country = userData.country || "";
         state.bio = userData.bio || "";
-        state.photo = userData.photo || "";
+
+        if (userData.photo) {
+          if(userData.photo.startsWith("http")) {
+             state.photo = userData.photo;
+          } else {
+            state.photo = userData.photo;
+          }
+        } else {
+          state.photo = ""
+        }
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.error = action.payload as string || "Ошибка загрузки профиля"
@@ -156,7 +165,15 @@ const userSlice = createSlice({
         if (updatedData.city !== undefined) state.city = updatedData.city;
         if (updatedData.country !== undefined) state.country = updatedData.country;
         if (updatedData.bio !== undefined) state.bio = updatedData.bio;
-        if (updatedData.photo !== undefined) state.photo = updatedData.photo;
+
+
+        if (updatedData.photo !== undefined) {
+          if(updatedData.photo.startsWith("http")) {
+             state.photo = updatedData.photo;
+          } else {
+            state.photo = updatedData.photo;
+          }
+        }
 
         // Или если сервер возвращает полный объект пользователя
         if (updatedData.id) state.id = updatedData.id;
