@@ -93,7 +93,7 @@ export const MyProfile = () => {
     if (data.bio !== undefined) updatedData.bio = data.bio;
 
     if(selectedPhoto) {
-      updatedData.photoFile = selectedPhoto
+      updatedData.photo = selectedPhoto
     }
 
     if (data.newPassword && data.newPassword === data.confirmPassword) {
@@ -108,10 +108,27 @@ export const MyProfile = () => {
       setIsEditing(false);
       setSelectedPhoto(null)
       setPhotoPreview("")
+
+       dispatch(fetchUserProfile());
     }
   }
 
-  const currentPhoto = photoPreview || photo || "/img/new-user.jpg"
+  const getPhotoUrl = (photoPath: string) => {
+  if (!photoPath) return "/img/new-user.jpg";
+  
+  if (photoPath.startsWith("http") || photoPath.startsWith("blob:")) {
+    return photoPath;
+  }
+  
+  // Если это относительный путь, добавляем базовый URL
+  if (photoPath.startsWith("/")) {
+    return `${import.meta.env.VITE_API_URL}${photoPath}`;
+  }
+  
+  return photoPath;
+};
+
+  const currentPhoto = photoPreview || getPhotoUrl(photo || "") || "/img/new-user.jpg"
 
   
 
@@ -123,10 +140,14 @@ export const MyProfile = () => {
             <div className="profile__img-wrapper">
               <img
                 className="profile__img"
-                src={photo || "/img/new-user.jpg"}
+                src={getPhotoUrl(photo || "")}
                 alt="Фото профиля"
                 width={240}
                 height={240}
+                onError={(e) => {
+    // Fallback если изображение не загружается
+    e.currentTarget.src = "/img/new-user.jpg";
+  }}
               />
               <div className="profile__edit-img" onClick={handleImageClick}>
                 <Icon name="photo-icon" width={32} height={32} />

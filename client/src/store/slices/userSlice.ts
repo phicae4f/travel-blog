@@ -140,7 +140,9 @@ const userSlice = createSlice({
         if (userData.photo) {
           if(userData.photo.startsWith("http")) {
              state.photo = userData.photo;
-          } else {
+          }else if (userData.photo.startsWith("/")) {
+      state.photo = `${import.meta.env.VITE_API_URL}${userData.photo}`;
+    } else {
             state.photo = userData.photo;
           }
         } else {
@@ -168,12 +170,14 @@ const userSlice = createSlice({
 
 
         if (updatedData.photo !== undefined) {
-          if(updatedData.photo.startsWith("http")) {
-             state.photo = updatedData.photo;
-          } else {
-            state.photo = updatedData.photo;
-          }
-        }
+    if(updatedData.photo.startsWith("http")) {
+      state.photo = updatedData.photo;
+    } else if (updatedData.photo.startsWith("/")) {
+      state.photo = `${import.meta.env.VITE_API_URL}${updatedData.photo}`;
+    } else {
+      state.photo = updatedData.photo;
+    }
+  }
 
         // Или если сервер возвращает полный объект пользователя
         if (updatedData.id) state.id = updatedData.id;
