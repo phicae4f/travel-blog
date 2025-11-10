@@ -8,10 +8,18 @@ interface Post {
     city: string
 }
 
+interface CurrentPost {
+    id: number,
+    title: string,
+    description: string,
+    country: string,
+    city: string
+}
+
 
 interface PostsState {
     posts: Post[],
-    currentPost: Post | null,
+    currentPost: CurrentPost | null,
     isLoading: boolean,
     error: string | null
 }
@@ -124,7 +132,7 @@ const postsSlice = createSlice({
             state.currentPost = {
                 id: postData.id || "",
                 title: postData.title || "",
-                excerpt: postData.excerpt || "",
+                description: postData.description || "",
                 country: postData.country || "",
                 city: postData.city || "",
             }
