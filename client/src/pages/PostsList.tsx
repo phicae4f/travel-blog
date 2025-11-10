@@ -1,13 +1,14 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { fetchAllPosts } from "../store/slices/postsSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/Button";
 
 export const PostsList = () => {
   const { posts, isLoading, error } = useAppSelector((state) => state.posts);
   const {token} = useAppSelector((state) => state.auth)
   const dispatch = useAppDispatch();
+  const navigate = useNavigate()
 
   useEffect(() => {
     dispatch(fetchAllPosts());
@@ -31,7 +32,7 @@ export const PostsList = () => {
             )}
             {posts.map((post) => (
                 <li className="posts__item" key={post.id}>
-                <Link to="/" className="post">
+                <Link to={`/post/${post.id}`} className="post">
                   <img
                     className="post__img"
                     width={370}
@@ -47,7 +48,7 @@ export const PostsList = () => {
                     </div>
                     <div className="post__lower">
                       <span className="post__place">{post.country ? (post.country, post.city) : (post.city)}</span>
-                      <Link to="/" className="post__link">Подробнее</Link>
+                      <button type="button" onClick={() => navigate(`/post/${post.id}`)} className="post__link">Подробнее</button>
                     </div>
                   </div>
                 </Link>

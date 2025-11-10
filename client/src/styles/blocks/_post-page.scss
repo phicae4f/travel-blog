@@ -1,11 +1,18 @@
 @use "../global/variables" as *;
 
-
 .post-page {
     padding-top: 30px;
 
     &__wrapper {
         width: 100%;
-        height: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__error {
+        color: $color-radical-red;
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 27px;
     }
 }

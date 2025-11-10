@@ -11,12 +11,14 @@ interface Post {
 
 interface PostsState {
     posts: Post[],
+    currentPost: Post | null,
     isLoading: boolean,
     error: string | null
 }
 
 const initialState: PostsState = {
     posts: [],
+    currentPost: null,
     isLoading: false,
     error: null
 }
@@ -118,6 +120,18 @@ const postsSlice = createSlice({
         })
         .addCase(fetchPostById.fulfilled, (state, action) => {
             state.isLoading = false
+            const postData = action.payload.data || action.payload
+            state.currentPost = {
+                id: postData.id || "",
+                title: postData.title || "",
+                excerpt: postData.excerpt || "",
+                country: postData.country || "",
+                city: postData.city || "",
+            }
+        })
+        .addCase(fetchPostById.rejected, (state, action) => {
+            state.isLoading = false
+            state.error = action.payload as string || "Ошибка загрузки поста"
         })
     }
 })

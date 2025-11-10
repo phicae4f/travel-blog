@@ -7,6 +7,7 @@ import { Layout } from "./components/Layout";
 import { MyProfile } from "./pages/MyProfile";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ShortLayout } from "./components/ShortLayout";
+import { PostPage } from "./pages/PostPage";
 
 function App() {
   return (
@@ -33,6 +34,14 @@ function App() {
           element={
             <Layout>
               <RegisterPage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/post/:id"
+          element={
+            <Layout>
+              <PostPage />
             </Layout>
           }
         />

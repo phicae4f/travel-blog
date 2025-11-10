@@ -9,6 +9,18 @@
     flex-direction: column;
     border-radius: 10px;
     box-shadow: 2px 5px 15px $color-black-25;
+    $root: &;
+
+    &--xl {
+        #{$root}__img {
+            height: 450px;
+        }
+
+        #{$root}__info {
+            padding: 30px 102px 119px;
+        }
+
+    }
     
 
     &__img {
@@ -71,6 +83,10 @@
         text-decoration-line: underline;
         color: $color-orange;
         transition: color $transition-300;
+        border: none;
+        padding: 0;
+        background-color: transparent;
+        cursor: pointer;
 
         &:hover, &:focus-visible {
             color: $color-orange-peel;
