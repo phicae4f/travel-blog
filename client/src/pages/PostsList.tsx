@@ -56,7 +56,7 @@ export const PostsList = () => {
             ))}
           </ul>
           {token && (
-              <Button type="button" text="Добавить мое путешествие"/>
+              <Button onClick={() => navigate("/post/add-post")} type="button" text="Добавить мое путешествие"/>
           )}
         </div>
       </div>

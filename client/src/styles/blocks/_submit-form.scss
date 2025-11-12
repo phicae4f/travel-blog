@@ -1,0 +1,14 @@
+@use "../global/variables" as *;
+
+.submit-form {
+    padding: 30px 0;
+    &__wrapper {
+        width: 100%;
+        background-color: $color-white;
+        padding: 28px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 30px 239px;
+    }
+}

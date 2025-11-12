@@ -8,6 +8,8 @@ import { MyProfile } from "./pages/MyProfile";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ShortLayout } from "./components/ShortLayout";
 import { PostPage } from "./pages/PostPage";
+import { AddCommentPage } from "./pages/AddCommentPage";
+import { AddPostPage } from "./pages/AddPostPage";
 
 function App() {
   return (
@@ -45,6 +47,27 @@ function App() {
             </Layout>
           }
         />
+        <Route
+          path="/post/:id/add-comment"
+          element={
+            <ProtectedRoute>
+              <ShortLayout>
+                <AddCommentPage />
+              </ShortLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/post/add-post"
+          element={
+            <ProtectedRoute>
+              <ShortLayout>
+                <AddPostPage />
+              </ShortLayout>
+            </ProtectedRoute>
+
+          }
+          />
         <Route
           path="/my-profile"
           element={

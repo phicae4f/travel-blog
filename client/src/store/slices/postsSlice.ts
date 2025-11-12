@@ -1,17 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import type { RootState } from "../store"
 
 interface Post {
     id: number | null,
     title: string,
-    excerpt: string,
-    country: string,
-    city: string
-}
-
-interface CurrentPost {
-    id: number,
-    title: string,
-    description: string,
+    excerpt?: string,
+    description?: string,
     country: string,
     city: string
 }
@@ -19,7 +13,7 @@ interface CurrentPost {
 
 interface PostsState {
     posts: Post[],
-    currentPost: CurrentPost | null,
+    currentPost: Post | null,
     isLoading: boolean,
     error: string | null
 }
@@ -85,6 +79,46 @@ export const fetchPostById = createAsyncThunk(
     }
 )
 
+export const createPost = createAsyncThunk(
+    "posts/createPost",
+    async ({title, description, country, city}: {title: string, description: string, country: string, city: string}, {getState, rejectWithValue}) => {
+        try {
+            const state = getState() as RootState
+            const token = state.auth.token
+
+            if(!token) {
+                throw new Error("Отсутствует токен")
+            }
+
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/posts`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    title,
+                    description,
+                    country,
+                    city
+                })
+            })
+
+            const data = await response.json()
+            if (!response.ok) {
+                if (data.messages) {
+                    const errorMessage = Object.values(data.messages).flat().join(", ");
+                    throw new Error(errorMessage);
+                }
+                throw new Error(data.message || "Не удалось создать комментарий");
+            }
+            return data
+        } catch (error: any) {
+            return rejectWithValue(error.message || "Не удалось создать пост")
+        }
+    }
+)
+
 const postsSlice = createSlice({
     name: "post",
     initialState,
@@ -140,6 +174,28 @@ const postsSlice = createSlice({
         .addCase(fetchPostById.rejected, (state, action) => {
             state.isLoading = false
             state.error = action.payload as string || "Ошибка загрузки поста"
+        })
+        // CREATE POST
+        .addCase(createPost.pending, (state) => {
+            state.isLoading = true
+            state.error = null
+        })
+        .addCase(createPost.fulfilled, (state, action) => {
+            state.isLoading = false
+
+            const newPost = action.payload || action.payload.data
+            const postToAdd = {
+                id: newPost.id,
+                title: newPost.title,
+                description: newPost.description,
+                country: newPost.country,
+                city: newPost.city
+            }
+            state.posts.push(postToAdd)
+        })
+        .addCase(createPost.rejected, (state, action) => {
+            state.isLoading = false
+            state.error = action.payload as string || "Не удалось создать пост"
         })
     }
 })

@@ -101,7 +101,7 @@ export const PostPage = () => {
                   type="button"
                   text="Назад"
                 />
-                <Button type="button" text="Ваше впечатление об этом месте" />
+                <Button type="button" text="Ваше впечатление об этом месте" onClick={() => navigate(`/post/${id}/add-comment`)}/>
               </div>
             </div>
           </div>

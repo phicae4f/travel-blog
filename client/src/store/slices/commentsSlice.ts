@@ -65,7 +65,7 @@ export const createComment = createAsyncThunk(
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({author_name, comment})
+                body: JSON.stringify({full_name: author_name, comment})
             })
 
             const data = await response.json();
@@ -105,7 +105,7 @@ const commentsSlice = createSlice({
                 state.comments = commentsData.map((comment) => ({
                     id: comment.id || null,
                     post_id: comment.post_id || null,
-                    author_name: comment.author_name || "",
+                    author_name: comment.author_name || comment.full_name || "",
                     comment: comment.comment || "",
                     created_at: comment.created_at || "" 
                 }))
@@ -128,7 +128,7 @@ const commentsSlice = createSlice({
             const commentToAdd = {
                 id: newComment.id,
                 post_id: newComment.post_id,
-                author_name: newComment.author_name,
+                author_name: newComment.author_name || newComment.full_name || "",
                 comment: newComment.comment,
                 created_at: newComment.created_at
             }
