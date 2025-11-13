@@ -1,22 +1,28 @@
-import { Navigate } from "react-router-dom"
-import { useAppSelector } from "../hooks/redux"
-
+import { Navigate } from "react-router-dom";
+import { useAppSelector } from "../hooks/redux";
+import { useEffect } from "react";
 
 interface ProtectedRouteProps {
-    children: React.ReactNode,
+  children: React.ReactNode;
 }
 
-export const ProtectedRoute = ({children}: ProtectedRouteProps) => {
-    const {token} = useAppSelector((state) => state.auth)
+export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  const { token } = useAppSelector((state) => state.auth);
 
-
-    if(!token) {
-        return(
-            <Navigate to="/" replace />
-        )
+  useEffect(() => {
+    if (!token) {
+      alert("Для доступа к этой странице необходимо авторизоваться");
     }
+  }, [token]);
 
+
+  if (!token) {
     return (
-        <>{children}</>
+        <>
+            <Navigate to="/" replace />
+        </>
     )
-}
+  }
+
+  return <>{children}</>;
+};

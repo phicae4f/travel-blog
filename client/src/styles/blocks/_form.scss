@@ -24,6 +24,42 @@
         gap: 30px;
     }
 
+    &__upload-wrapper {
+        display: flex;
+        width: 200px;
+    }
+
+    &__upload {
+        position: relative;
+        width: 100%;
+        background-color: transparent;
+        border: 1px solid $color-gainsboro;
+        font-family: $ff-poppins;
+        padding: 5px 16px 5px 38px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 32px;
+
+        & svg {
+            position: absolute;
+            top: 9px;
+            left: 16px;
+        }
+
+        &:hover, &:focus-visible {
+            border: 1px solid $color-black-25;
+        }
+    }
+
+    &__upload-text {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 22px;
+        color: $color-black-85;
+    }
+
     &__small-fields {
         display: flex;
         width: 100%;

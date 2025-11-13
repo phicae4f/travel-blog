@@ -7,7 +7,8 @@ interface Post {
     excerpt?: string,
     description?: string,
     country: string,
-    city: string
+    city: string,
+    photo?: string
 }
 
 
@@ -81,7 +82,7 @@ export const fetchPostById = createAsyncThunk(
 
 export const createPost = createAsyncThunk(
     "posts/createPost",
-    async ({title, description, country, city}: {title: string, description: string, country: string, city: string}, {getState, rejectWithValue}) => {
+    async ({title, description, country, city, photo}: {title: string, description: string, country: string, city: string, photo: File}, {getState, rejectWithValue}) => {
         try {
             const state = getState() as RootState
             const token = state.auth.token
@@ -89,19 +90,19 @@ export const createPost = createAsyncThunk(
             if(!token) {
                 throw new Error("Отсутствует токен")
             }
+            const formData = new FormData()
+            formData.append("title", title)
+            formData.append("description", description)
+            formData.append("country", country)
+            formData.append("city", title)
+            formData.append("photo", photo)
 
             const response = await fetch(`${import.meta.env.VITE_API_URL}/posts`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    title,
-                    description,
-                    country,
-                    city
-                })
+                body: formData
             })
 
             const data = await response.json()
@@ -189,7 +190,8 @@ const postsSlice = createSlice({
                 title: newPost.title,
                 description: newPost.description,
                 country: newPost.country,
-                city: newPost.city
+                city: newPost.city,
+                photo: newPost.photo
             }
             state.posts.push(postToAdd)
         })
