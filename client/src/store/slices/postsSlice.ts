@@ -94,7 +94,7 @@ export const createPost = createAsyncThunk(
             formData.append("title", title)
             formData.append("description", description)
             formData.append("country", country)
-            formData.append("city", title)
+            formData.append("city", city)
             formData.append("photo", photo)
 
             const response = await fetch(`${import.meta.env.VITE_API_URL}/posts`, {

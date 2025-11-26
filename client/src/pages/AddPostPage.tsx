@@ -56,7 +56,7 @@ export const AddPostPage = () => {
             cityInput
             postTextarea
             onBack={handleBack}
-            onSubmitPost={handleSubmit}
+            onSubmitPost={() => handleSubmit}
           />
         </div>
       </div>

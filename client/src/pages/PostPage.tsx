@@ -11,9 +11,7 @@ export const PostPage = () => {
     (state) => state.posts
   );
   const {
-    comments,
-    isLoading: isLoadingComments,
-    error: errorComments,
+    comments
   } = useAppSelector((state) => state.comments);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
